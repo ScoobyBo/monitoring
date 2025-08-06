@@ -1,0 +1,66 @@
+global:
+  scrape_interval: 15s  
+  evaluation_interval: 15s  
+
+scrape_configs:
+  # Мониторинг мастер-узла k3s
+  - job_name: 'master-1'
+    static_configs:
+      - targets: ['<node-ip>:9100']  
+        labels:
+          instance: ansible-master  
+
+  # Мониторинг слейв-узла k3s
+  - job_name: 'slave-1'
+    static_configs:
+      - targets: ['<node-ip>:9100']
+        labels:
+          instance: ansible-slave
+
+  # Мониторинг сервера Prometheus
+  - job_name: 'localhost'
+    static_configs:
+      - targets: ['127.0.0.1:9100']
+        labels:
+          instance: localhost
+
+  # Мониторинг cAdvisor для под K3s
+  - job_name: 'k3s-cadvisor'
+    scheme: https
+    metrics_path: /metrics/cadvisor
+    bearer_token_file: /etc/prometheus/secrets/k3s_token
+    tls_config:
+      insecure_skip_verify: true  
+    kubernetes_sd_configs:
+      - role: node
+        api_server: https://<node-ip>:6443
+        bearer_token_file: /etc/prometheus/secrets/k3s_token
+        tls_config:
+          insecure_skip_verify: true
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: instance
+
+  # Мониторинг K3s API
+  - job_name: 'k3s-kube-api'
+    scheme: https
+    metrics_path: /metrics
+    bearer_token_file: /etc/prometheus/secrets/k3s_token
+    tls_config:
+      insecure_skip_verify: true
+    kubernetes_sd_configs:
+      - role: node
+        api_server: https://<node-ip>:6443
+        bearer_token_file: /etc/prometheus/secrets/k3s_token
+        tls_config:
+          insecure_skip_verify: true
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: instance
+
+  # Мониторинг kube-state-metrics
+  - job_name: 'kube-state-metrics'
+    static_configs:
+      - targets: ['<node-ip>:30080']
+        labels:
+          instance: kube-state-metrics
