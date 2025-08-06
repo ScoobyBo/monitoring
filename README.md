@@ -15,8 +15,8 @@
 ## Инструкции по установке
 
 1. Клонируйте репозиторий:
-    - 'git clone https://github.com/your-username/your-repo.git'
-    - 'cd your-repo'
+    - git clone https://github.com/ScoobyBo/monitoring.git
+    - cd monitoring
 
 2. Поместите ваш токен K3s в файл secrets/k3s_token  
 
@@ -25,7 +25,7 @@
     - Убедитесь, что путь /metrics/cadvisor и /metrics для K3s API доступен.
 
 4. Запустите стек:
-    - 'docker-compose up -d'
+    - docker-compose up -d
 
 ## Детали конфигурации
 Файл docker-compose.yaml определяет три сервиса:
@@ -42,9 +42,9 @@
 
 ## Доступ к сервисам  
 
-- Prometheus: 'http://<host-ip>:9090'  
+- Prometheus: http://<host-ip>:9090  
 - Grafana: 'http://<host-ip>:3000' (логин: admin, пароль: admin)  
-- Node Exporter: 'http://<host-ip>:9100/metrics'  
+- Node Exporter: http://<host-ip>:9100/metrics  
 
 В Grafana добавьте Prometheus как источник данных:
-URL: 'http://prometheus:9090'
+URL: http://prometheus:9090
